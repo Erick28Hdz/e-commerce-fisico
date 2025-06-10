@@ -14,9 +14,6 @@ export function ProductoColor({ color }: { color: string }) {
           }}
           title={color}
         />
-        <span className="text-sm italic text-[var(--color-text-primary)]">
-          Código: {color}
-        </span>
       </div>
     </div>
   );

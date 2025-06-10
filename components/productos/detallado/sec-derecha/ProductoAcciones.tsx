@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Heart, Share2, X, Facebook, Twitter, Linkedin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link"
+import { TooltipUniversal } from "@/components/ui/Tooltip";
 
 export const ProductoAcciones: React.FC = () => {
   const [guardado, setGuardado] = useState(false);
@@ -17,25 +18,32 @@ export const ProductoAcciones: React.FC = () => {
   return (
     <div className="flex flex-col gap-2 mt-4 relative">
       <div className="flex">
-        {/* Botón de guardar */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setGuardado(!guardado)}
-          className={guardado ? "text-red-600" : "text-[var(--color-principal)]"}
-        >
-          <Heart fill={guardado ? "red" : "none"} size={22} />
-        </Button>
-
-        {/* Botón de compartir */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setMostrarOpciones(!mostrarOpciones)}
-          className="text-[var(--color-principal)]"
-        >
-          <Share2 size={22} />
-        </Button>
+        <div className="relative group">
+          <TooltipUniversal texto="Guardar producto">
+            {/* Botón de guardar */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setGuardado(!guardado)}
+              className={guardado ? "text-red-600" : "text-[var(--color-principal)]"}
+            >
+              <Heart fill={guardado ? "red" : "none"} size={22} />
+            </Button>
+          </TooltipUniversal>
+        </div>
+        <div className="relative group">
+          <TooltipUniversal texto="Compartir producto">
+            {/* Botón de compartir */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMostrarOpciones(!mostrarOpciones)}
+              className="text-[var(--color-principal)]"
+            >
+              <Share2 size={22} />
+            </Button>
+          </TooltipUniversal>
+        </div>
       </div>
 
       {/* Menú de compartir */}
