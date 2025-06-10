@@ -30,7 +30,7 @@ const StarRating: React.FC<StarRatingProps> = ({
         return (
           <Star
             key={index}
-            size={24}
+            size={20}
             className={editable ? 'cursor-pointer transition-colors' : 'transition-colors'}
             style={{
               fill: isFilled ? 'var(--color-principal)' : 'none',

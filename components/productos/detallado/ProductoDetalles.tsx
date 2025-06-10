@@ -5,12 +5,14 @@ import { ProductoPrecio } from "./sec-derecha/ProductoPrecio";
 import { ProductoTallas } from "./sec-derecha/ProductoTallas";
 import { ProductoColor } from "./sec-derecha/ProductoColor";
 import { ProductoPuntuacion } from "./review/ProductoPuntuacion";
-import { ProductoStock } from "./sec-derecha/ProductoStock";
 import { ProductoMensaje } from "./sec-derecha/ProductoMensaje";
 import { ProductoDescripcion } from "./sec-derecha/ProductoDescripcion";
 import { ProductoAcciones } from "./sec-derecha/ProductoAcciones";
 import { ProductoEspecificaciones } from "./sec-derecha/ProductoEspecificaciones";
-import { ProductoCantidad } from "./sec-derecha/ProductoCantidad";
+import { PreguntasFrecuentesModal } from "@/components/productos/detallado/sec-derecha/PreguntasModal";
+import { GarantiaModal } from "./sec-derecha/GarantiaModal";
+
+import { GuiaCategoriaModal } from "./sec-derecha/GuiaCategoriaModal";
 
 interface ProductoDetallesProps {
   producto: {
@@ -29,7 +31,6 @@ interface ProductoDetallesProps {
     referencia: string;
   };
   review: {
-
   }
 }
 
@@ -48,17 +49,24 @@ export const ProductoDetalles: React.FC<{ producto: ProductoDetallesProps["produ
         mx-auto
       "
     >
-      <div className="mt-2 flex justify-between">
-        {producto.referencia && (
-          <p className="text-sm text-[var(--color-accent)] mt-1 italic">Ref: {producto.referencia}</p>
-        )}
-        <ProductoCategoria categoria={producto.categoria} />
+      <div className="mt-2 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+        <div>
+          {producto.referencia && (
+            <p className="text-sm text-[var(--color-accent)] italic">Ref: {producto.referencia}</p>
+          )}
+          <ProductoCategoria categoria={producto.categoria} />
+        </div>
+
+        <div className="flex mt-2 sm:mt-0">
+          <PreguntasFrecuentesModal />
+          <GarantiaModal />
+        </div>
       </div>
+
       <div className="flex flex-col gap-2">
         {/* Fila: Título y Acciones */}
         <div className="flex justify-between items-start">
           <ProductoTituloDetalle nombre={producto.nombre} />
-          <ProductoAcciones />
         </div>
         {/* Mensaje debajo del título */}
         {producto.mensaje && (
@@ -79,15 +87,15 @@ export const ProductoDetalles: React.FC<{ producto: ProductoDetallesProps["produ
         <ProductoDescripcion descripcion={producto.descripcion} />
       </div>
       <ProductoEspecificaciones />
-      <div className="mt-6">
+      <div className="mt-6 flex">
         <ProductoTallas tallas={producto.variantes} />
+        <GuiaCategoriaModal categoria={producto.categoria} />
       </div>
-      <div className="mt-6">
-        <ProductoColor color={producto.color} />
-      </div>
-      <ProductoCantidad />
-      <div className="mt-2">
-        <ProductoStock stock={producto.stock} />
+      {/* Mostrar guía según la categoría */}
+
+      <div className="mt-6 flex justify-between">
+        <div><ProductoColor color={producto.color} /></div>
+        <div><ProductoAcciones /></div>
       </div>
     </div>
   );

@@ -16,6 +16,9 @@ export interface Producto {
   variantes: string[];
   color: string;
   categoria: string; // Puedes luego hacer que coincida con un tipo como "Ropa" | "Calzado"
+  tiempoEnvioDias?: number; // tiempo estimado de envío
+  ubicacion?: string;       // desde dónde se envía (opcional)
+  limiteStockVisible?: number; // para mostrar “solo quedan X unidades”
 }
 
 export const productosMock: Producto[] = [
@@ -34,7 +37,10 @@ export const productosMock: Producto[] = [
     stock: 15,
     variantes: ["S", "M", "L"],
     color: "Negro",
-    categoria: "Ropa"
+    categoria: "Ropa",
+    tiempoEnvioDias: 3,
+    ubicacion: "Bogotá",
+    limiteStockVisible: 5,
   },
   {
     id: "2",
@@ -48,7 +54,10 @@ export const productosMock: Producto[] = [
     stock: 8,
     variantes: ["38", "39", "40", "41"],
     color: "Gris",
-    categoria: "Calzado"
+    categoria: "Calzado",
+    tiempoEnvioDias: 6,
+    ubicacion: "Cali",
+    limiteStockVisible: 5,
   },
   {
     id: "3",
@@ -65,7 +74,10 @@ export const productosMock: Producto[] = [
     stock: 12,
     variantes: ["M", "L", "XL"],
     color: "Azul",
-    categoria: "Ropa"
+    categoria: "Ropa",
+    tiempoEnvioDias: 15,
+    ubicacion: "Medellin",
+    limiteStockVisible: 5,
   },
   {
     id: "4",
@@ -99,7 +111,7 @@ export const productosMock: Producto[] = [
     categoria: "Accesorios"
   },
   {
-    id: "6",referencia: "REF-0006",
+    id: "6", referencia: "REF-0006",
     nombre: "Gafas de Sol Retro",
     slug: "gafas-de-sol-retro",
     descripcion: "Estilo vintage con protección UV400.",

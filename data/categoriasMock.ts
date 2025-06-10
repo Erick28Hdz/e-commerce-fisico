@@ -32,3 +32,6 @@ export const categoriasMock: Categoria[] = [
     descripcion: "Productos para el cuidado personal y fragancias."
   }
 ];
+
+// Derivar tipo de slug
+export type CategoriaSlug = (typeof categoriasMock)[number]["slug"];

@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import { productosMock } from "@/data/productosMock";
 import { useMemo } from "react";
-import { GaleriaProducto } from "@/components/productos/detallado/GaleriaProducto";
 import { ProductoDetalles } from "@/components/productos/detallado/ProductoDetalles";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { BotonesAccion } from "@/components/productos/detallado/sec-izquierda/BotonesAccion";
+import ProductoDetalleVisual from "@/components/productos/detallado/ProductoDetalleVisual";
 import { ProductoReviews } from "@/components/productos/detallado/secciones/ProductoReviews";
+import { SeccionConfianza } from "@/components/productos/detallado/sec-izquierda/SeccionConfianza";
 import ProductosMismaCategoria from "@/components/productos/detallado/secciones/ProductosMismaCategoria";
 import ProductosMasVendidos from "@/components/productos/detallado/secciones/ProductosMasVendidos";
 import ProductosRecomendados from "@/components/productos/detallado/secciones/ProductosRecomendados";
@@ -50,22 +50,14 @@ export default function ProductoPage() {
 
       {/* Contenido del producto */}
       <div className="flex flex-col md:flex-row gap-8">
-        {/* Galería de imágenes */}
-        <div className="flex-1">
-          <GaleriaProducto
-            key={producto.slug}
-            imagenPrincipal={producto.imagen}
-            imagenesSecundarias={producto.imagenesSecundarias}
-            alt={producto.nombre}
-          />
-          {/* Botones de acción */}
-          <div className="mt-10 flex justify-center gap-6">
-            <BotonesAccion />
-          </div>
-        </div>
-
+        <ProductoDetalleVisual producto={producto} />
         {/* Detalles del producto */}
         <ProductoDetalles producto={producto} />
+      </div>
+
+      {/* Sección de confianza */}
+      <div className="">
+        <SeccionConfianza />
       </div>
 
       {/* Sección de productos de la misma categoría */}
@@ -80,7 +72,7 @@ export default function ProductoPage() {
       <ProductosRecomendados />
 
       <div className="mt-10">
-        <ProductoReviews producto={producto} initialReviews={reseñasDelProducto}/>
+        <ProductoReviews producto={producto} initialReviews={reseñasDelProducto} />
       </div>
     </div>
   );
