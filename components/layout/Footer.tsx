@@ -3,7 +3,8 @@ import { IconType } from "react-icons";
 import { FC } from "react";
 import { Container } from "../ui/container";
 import { Link } from "../ui/Link";
-import { IconLink } from "../nav/IconLink"; // Importa tu componente Link
+import { SocialIcons } from "../ui/SocialIcons";
+
 
 interface FooterProps {
   sections: {
@@ -28,7 +29,6 @@ interface FooterProps {
 
 const Footer: FC<FooterProps> = ({
   sections,
-  socialLinks,
   contactInfo,
   copyright,
 }) => {
@@ -38,7 +38,7 @@ const Footer: FC<FooterProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {sections.map((section) => (
             <div key={section.title}>
-              <h3 className="mb-3">{section.title}</h3>
+              <h5 className="mb-3">{section.title}</h5>
               <ul className="space-y-2">
                 {section.links.map((link) => (
                   <li key={link.href}>
@@ -53,7 +53,7 @@ const Footer: FC<FooterProps> = ({
 
           {(contactInfo?.email || contactInfo?.phone || contactInfo?.address) && (
             <div>
-              <h3 className="mb-3">Contacto</h3>
+              <h5 className="mb-3">Contacto</h5>
               <ul className="space-y-2">
                 {contactInfo.email && (
                   <li>
@@ -70,21 +70,13 @@ const Footer: FC<FooterProps> = ({
               </ul>
             </div>
           )}
-
-          {socialLinks && socialLinks.length > 0 && (
-            <div>
-              <h3 className="mb-3">Síguenos</h3>
-              <div className="flex space-x-4">
-                {socialLinks
-                  .filter((link) => link.icon) 
-                  .map(({ label, href, icon }) => (
-                    <IconLink key={href} href={href} icon={icon!} label={label} />
-                  ))}
-              </div>
+          <div>
+            <h5 className="mb-3">Síguenos</h5>
+            <div className="flex space-x-4">
+              <SocialIcons className="mt-4" />
             </div>
-          )}
+          </div>
         </div>
-
         <hr className="my-8 border-[var(--color-accent)]" />
         <p className="text-center text-sm text-[var(--color-accent)]">
           {copyright}

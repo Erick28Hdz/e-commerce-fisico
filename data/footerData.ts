@@ -1,7 +1,3 @@
-import { Facebook, Twitter, Instagram } from "lucide-react";
-import React from "react";
-
-
 export const footerSections = [
     {
         title: "Empresa",
@@ -19,12 +15,6 @@ export const footerSections = [
             { label: "Términos y condiciones", href: "/terminos" },
         ],
     },
-];
-
-export const socialLinks = [
-  { label: "Facebook", href: "https://facebook.com", icon: Facebook },
-  { label: "Twitter", href: "https://twitter.com", icon: Twitter },
-  { label: "Instagram", href: "https://instagram.com", icon: Instagram },
 ];
 
 export const contactInfo = {

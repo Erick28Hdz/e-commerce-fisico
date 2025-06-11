@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { categoriasMock } from "@/data/categoriasMock";
-import CategoryList from "@/components/sidebar/CategoriasList";
-import FormCheckbox from "../ui/Checkbox";
-import FormInput from "../ui/Input";
+import CategoryList from "@/components/productos/sidebar/CategoriasList";
+import FormCheckbox from "../../ui/Checkbox";
+import FormInput from "../../ui/Input";
 import SelectRating from "@/components/ui/SelectRating";
-import { Button } from "../ui/Button";
+import { Button } from "../../ui/Button";
 
 type Props = {
     onFiltrar: (filtros: any) => void;

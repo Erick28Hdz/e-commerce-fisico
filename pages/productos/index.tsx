@@ -1,10 +1,12 @@
+import Head from "next/head";
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/router";
 import { productosMock } from "@/data/productosMock";
-import { Container } from "@/components/ui/container";
-import SidebarCategorias from "@/components/sidebar/SidebarCategorias";
+import SidebarCategorias from "@/components/productos/sidebar/SidebarCategorias";
 import ProductoCard from "@/components/productos/tarjeta/ProductCard";
 import Paginacion from "@/components/ui/Paginacion";
+
+import HeroCarrusel from "@/components/ui/HeroBanners";
 
 const PRODUCTOS_POR_PAGINA = 9;
 
@@ -90,16 +92,20 @@ export default function ProductosPage() {
   };
 
   return (
-    <Container>
+    <>
+      <Head>
+        <title>Productos | SuperTienda</title>
+      </Head>
+      <HeroCarrusel /> {/* Aquí agregas el hero */}
       <div className="flex gap-8">
         <SidebarCategorias onFiltrar={setFiltros} />
 
         <main className="flex-1">
-          <h3 className="mb-2 text-center">
+          <h2 className="mb-2 text-center text-[var(--color-principal)] ">
             {categoriaNormalizada === "Todos"
-              ? "Todos los productos"
+              ? "Nuestros productos"
               : categoriaNormalizada}
-          </h3>
+          </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {productosPaginados.map((producto) => (
@@ -112,7 +118,6 @@ export default function ProductosPage() {
                 precio={producto.precio}
                 precioAntiguo={producto.precioAntiguo}
                 descuento={producto.descuento}
-                puntuacion={producto.puntuacion}
                 mensaje={producto.mensaje}
               />
             ))}
@@ -125,7 +130,7 @@ export default function ProductosPage() {
           />
         </main>
       </div>
-    </Container>
+    </>
   );
 }
 

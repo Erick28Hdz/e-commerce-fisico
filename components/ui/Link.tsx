@@ -27,15 +27,24 @@ const variantClasses: Record<string, string> = {
   ghost: `
     text-[var(--color-accent)] 
     hover:text-[var(--color-principal)] 
-    underline underline-offset-3 decoration-[2px]
+    underline underline-offset-8 decoration-[2px]
     transition-colors duration-200
   `,
+  icon: `
+    inline-flex items-center justify-center
+    w-8 h-8 rounded-full
+    bg-[var(--color-accent)]
+    text-[var(--color-text-primary)]
+    hover:bg-[var(--color-principal)]
+    hover:text-[var(--color-text-secondary)]
+    transition-all
+  `
 }
 
 interface LinkProps {
   href: string
   children: ReactNode
-  variant?: "link" | "default" | "ghost" | "footer"
+  variant?: "link" | "default" | "ghost" | "footer" | "icon"
   className?: string
   onClick?: MouseEventHandler<HTMLAnchorElement>
   target?: string

@@ -5,7 +5,7 @@ type FormInputProps<T extends string | number> = {
   placeholder?: string;
   min?: number;
   max?: number;
-  type?: "text" | "number";
+  type?: React.HTMLInputTypeAttribute; // "text" | "number" | "email" | ...
 };
 
 export default function FormInput<T extends string | number>({
@@ -15,7 +15,7 @@ export default function FormInput<T extends string | number>({
   placeholder = "",
   min,
   max,
-  type = "number",
+  type = "text", // ✅ mejor default
 }: FormInputProps<T>) {
   return (
     <div className="mb-5">
@@ -32,7 +32,13 @@ export default function FormInput<T extends string | number>({
         max={max}
         value={value}
         onChange={(e) =>
-          onChange(e.target.value === "" ? ("" as T) : (type === "number" ? (Number(e.target.value) as T) : (e.target.value as T)))
+          onChange(
+            e.target.value === ""
+              ? ("" as T)
+              : (type === "number"
+                  ? (Number(e.target.value) as T)
+                  : (e.target.value as T))
+          )
         }
         placeholder={placeholder}
         className="

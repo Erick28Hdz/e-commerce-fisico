@@ -19,6 +19,7 @@ export interface Producto {
   tiempoEnvioDias?: number; // tiempo estimado de envío
   ubicacion?: string;       // desde dónde se envía (opcional)
   limiteStockVisible?: number; // para mostrar “solo quedan X unidades”
+  cantidad: number; // solo se usa cuando el producto está en el carrito
 }
 
 export const productosMock: Producto[] = [
@@ -41,6 +42,7 @@ export const productosMock: Producto[] = [
     tiempoEnvioDias: 3,
     ubicacion: "Bogotá",
     limiteStockVisible: 5,
+    cantidad: 1,
   },
   {
     id: "2",
@@ -58,6 +60,7 @@ export const productosMock: Producto[] = [
     tiempoEnvioDias: 6,
     ubicacion: "Cali",
     limiteStockVisible: 5,
+    cantidad: 2,
   },
   {
     id: "3",
@@ -78,6 +81,7 @@ export const productosMock: Producto[] = [
     tiempoEnvioDias: 15,
     ubicacion: "Medellin",
     limiteStockVisible: 5,
+    cantidad: 1,
   },
   {
     id: "4",
@@ -91,7 +95,8 @@ export const productosMock: Producto[] = [
     stock: 20,
     variantes: ["30", "32", "34", "36"],
     color: "#00008B",
-    categoria: "Ropa"
+    categoria: "Ropa",
+    cantidad: 0,
   },
   {
     id: "5",
@@ -108,7 +113,8 @@ export const productosMock: Producto[] = [
     stock: 25,
     variantes: [],
     color: "Negro",
-    categoria: "Accesorios"
+    categoria: "Accesorios",
+    cantidad: 1,
   },
   {
     id: "6", referencia: "REF-0006",
@@ -121,7 +127,8 @@ export const productosMock: Producto[] = [
     stock: 30,
     variantes: [],
     color: "Marrón",
-    categoria: "Accesorios"
+    categoria: "Accesorios",
+    cantidad: 1,
   },
   {
     id: "7",
@@ -138,7 +145,8 @@ export const productosMock: Producto[] = [
     stock: 10,
     variantes: ["Negro", "Gris"],
     color: "Negro",
-    categoria: "Accesorios"
+    categoria: "Accesorios",
+    cantidad: 1,
   },
   {
     id: "8",
@@ -152,7 +160,8 @@ export const productosMock: Producto[] = [
     stock: 18,
     variantes: [],
     color: "Blanco",
-    categoria: "Electrónica"
+    categoria: "Electrónica",
+    cantidad: 0,
   },
   {
     id: "9",
@@ -169,7 +178,8 @@ export const productosMock: Producto[] = [
     stock: 5,
     variantes: [],
     color: "Blanco",
-    categoria: "Electrónica"
+    categoria: "Electrónica",
+    cantidad: 1,
   },
   {
     id: "10",
@@ -186,7 +196,8 @@ export const productosMock: Producto[] = [
     stock: 7,
     variantes: ["128GB", "256GB"],
     color: "Negro",
-    categoria: "Electrónica"
+    categoria: "Electrónica",
+    cantidad: 1,
   },
   {
     id: "11",
@@ -200,7 +211,8 @@ export const productosMock: Producto[] = [
     stock: 9,
     variantes: ["WiFi", "WiFi + LTE"],
     color: "Gris espacial",
-    categoria: "Electrónica"
+    categoria: "Electrónica",
+    cantidad: 1,
   },
   {
     id: "12",
@@ -217,7 +229,8 @@ export const productosMock: Producto[] = [
     stock: 13,
     variantes: ["S", "M", "L", "XL"],
     color: "Verde",
-    categoria: "Ropa"
+    categoria: "Ropa",
+    cantidad: 0,
   },
   {
     id: "13",
@@ -231,7 +244,8 @@ export const productosMock: Producto[] = [
     stock: 14,
     variantes: ["38", "39", "40", "41"],
     color: "Rojo",
-    categoria: "Calzado"
+    categoria: "Calzado",
+    cantidad: 0,
   },
   {
     id: "14",
@@ -247,7 +261,8 @@ export const productosMock: Producto[] = [
     stock: 6,
     variantes: [],
     color: "Beige",
-    categoria: "Accesorios"
+    categoria: "Accesorios",
+    cantidad: 0,
   },
   {
     id: "15",
@@ -261,7 +276,8 @@ export const productosMock: Producto[] = [
     stock: 22,
     variantes: ["S", "M", "L", "XL"],
     color: "Blanco",
-    categoria: "Ropa"
+    categoria: "Ropa",
+    cantidad: 0,
   },
   {
     id: "16",
@@ -274,7 +290,8 @@ export const productosMock: Producto[] = [
     stock: 17,
     variantes: [],
     color: "Marrón",
-    categoria: "Accesorios"
+    categoria: "Accesorios",
+    cantidad: 0,
   },
   {
     id: "17",
@@ -291,7 +308,8 @@ export const productosMock: Producto[] = [
     stock: 19,
     variantes: ["S", "M", "L", "XL"],
     color: "Gris",
-    categoria: "Ropa"
+    categoria: "Ropa",
+    cantidad: 0,
   },
   {
     id: "18",
@@ -305,7 +323,8 @@ export const productosMock: Producto[] = [
     stock: 11,
     variantes: ["40", "41", "42"],
     color: "Marrón",
-    categoria: "Calzado"
+    categoria: "Calzado",
+    cantidad: 0,
   },
   {
     id: "19",
@@ -319,7 +338,8 @@ export const productosMock: Producto[] = [
     stock: 50,
     variantes: [],
     color: "Negro",
-    categoria: "Electrónica"
+    categoria: "Electrónica",
+    cantidad: 0,
   },
   {
     id: "20",
@@ -336,6 +356,7 @@ export const productosMock: Producto[] = [
     stock: 10,
     variantes: [],
     color: "Rosa",
-    categoria: "Belleza"
+    categoria: "Belleza",
+    cantidad: 0,
   }
 ];

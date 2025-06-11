@@ -4,7 +4,6 @@ import { Navbar } from './Navbar';
 import { Container } from '../ui/container'; // Asegúrate de importar el Container
 import {
   footerSections,
-  socialLinks,
   contactInfo,
   copyright,
 } from "../../data/footerData";
@@ -21,7 +20,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </main>
       <Footer
         sections={footerSections}
-        socialLinks={socialLinks}
         contactInfo={contactInfo}
         copyright={copyright}
       />

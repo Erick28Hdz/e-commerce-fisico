@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useState, useMemo } from "react";
 import { productosMock } from "@/data/productosMock";
 import { Container } from "@/components/ui/container";
-import SidebarCategorias from "@/components/sidebar/SidebarCategorias";
+import SidebarCategorias from "@/components/productos/sidebar/SidebarCategorias";
 import ProductoCard from "@/components/productos/tarjeta/ProductCard";
 import Paginacion from "@/components/ui/Paginacion";
 
@@ -41,7 +41,9 @@ export default function ProductosPorCategoriaPage() {
   return (
     <Container>
       <div className="flex gap-8">
-        <SidebarCategorias />
+        <SidebarCategorias onFiltrar={function (filtros: any): void {
+          throw new Error("Function not implemented.");
+        } } />
         <main className="flex-1">
           <h3 className="mb-2 text-center capitalize">
             Productos en "{categoria}"

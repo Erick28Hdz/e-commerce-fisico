@@ -1,9 +1,9 @@
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { productosMock } from "@/data/productosMock";
 import { useMemo } from "react";
 import { ProductoDetalles } from "@/components/productos/detallado/ProductoDetalles";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import VolverAtras from "@/components/ui/VolverAtras";
 import ProductoDetalleVisual from "@/components/productos/detallado/ProductoDetalleVisual";
 import { ProductoReviews } from "@/components/productos/detallado/secciones/ProductoReviews";
 import { SeccionConfianza } from "@/components/productos/detallado/sec-izquierda/SeccionConfianza";
@@ -36,44 +36,42 @@ export default function ProductoPage() {
   }
 
   return (
-    <div className="p-6 md:p-10 max-w-8xl mx-auto bg-[var(--color-bg-light)] rounded-2xl shadow-xl">
+    <>
+      <Head>
+        <title>nombre producto | SuperTienda</title>
+      </Head>
+      <div className="p-6 md:p-10 max-w-8xl mx-auto bg-[var(--color-bg-light)] rounded-2xl shadow-xl">
+        {/* Botón de volver al inicio del contenido */}
+        <div className="mb-2">
+          <VolverAtras />
+        </div>
+        {/* Contenido del producto */}
+        <div className="flex flex-col md:flex-row gap-8">
+          <ProductoDetalleVisual producto={producto} />
+          {/* Detalles del producto */}
+          <ProductoDetalles producto={producto} />
+        </div>
 
-      {/* Botón de volver al inicio del contenido */}
-      <div className="mb-2">
-        <Button
-          onClick={() => router.push("/productos")}
-          variant="ghost"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
+        {/* Sección de confianza */}
+        <div className="">
+          <SeccionConfianza />
+        </div>
+
+        {/* Sección de productos de la misma categoría */}
+        <ProductosMismaCategoria
+          categoria={producto.categoria}
+          actualSlug={producto.slug}
+        />
+        {/* Sección de más vendidos */}
+        <ProductosMasVendidos />
+
+        {/* Sección de recomendados para ti */}
+        <ProductosRecomendados />
+
+        <div className="mt-10">
+          <ProductoReviews producto={producto} initialReviews={reseñasDelProducto} />
+        </div>
       </div>
-
-      {/* Contenido del producto */}
-      <div className="flex flex-col md:flex-row gap-8">
-        <ProductoDetalleVisual producto={producto} />
-        {/* Detalles del producto */}
-        <ProductoDetalles producto={producto} />
-      </div>
-
-      {/* Sección de confianza */}
-      <div className="">
-        <SeccionConfianza />
-      </div>
-
-      {/* Sección de productos de la misma categoría */}
-      <ProductosMismaCategoria
-        categoria={producto.categoria}
-        actualSlug={producto.slug}
-      />
-      {/* Sección de más vendidos */}
-      <ProductosMasVendidos />
-
-      {/* Sección de recomendados para ti */}
-      <ProductosRecomendados />
-
-      <div className="mt-10">
-        <ProductoReviews producto={producto} initialReviews={reseñasDelProducto} />
-      </div>
-    </div>
+    </>
   );
 }

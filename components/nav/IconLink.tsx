@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "../ui/Link";
 import { FC } from "react";
 import type { IconType } from "react-icons"; 
 
@@ -18,7 +18,7 @@ export const IconLink: FC<IconLinkProps> = ({
   <Link
     href={href}
     aria-label={label}
-    className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--color-accent)] text-[var(--color-text-primary)] hover:bg-[var(--color-principal)] hover:text-[var(--color-text-secondary)] transition-all ${className || ""}`}
+    variant="icon"
   >
     <Icon className="w-5 h-5" />
   </Link>
