@@ -13,8 +13,8 @@ export default function ResumenPedido({ total, cantidad }: ResumenPedidoProps) {
       <h3 className="mb-4 text-[var(--color-principal)]">Resumen del Pedido</h3>
       <p>Productos: {cantidad}</p>
       <p className="text-xl font-bold mb-4">Total: ${total.toFixed(2)}</p>
-      <Button className="w-full py-2 rounded-md">
-        Proceder al Pago
+      <Button asChild className="w-full py-2 rounded-md">
+        <Link variant="default" href="/checkout">Proceder al Pago</Link>
       </Button>
       <Link
         href="/productos"

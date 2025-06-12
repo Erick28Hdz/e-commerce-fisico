@@ -1,35 +1,32 @@
-// pages/carrito/index.tsx
 import Head from "next/head";
-import { useState } from "react";
+import { useRouter } from "next/router";
 import { Section } from "@/components/ui/Section";
 import CarritoLista from "@/components/carrito/CarritoLista";
 import ResumenPedido from "@/components/carrito/ResumenPedido";
 import { CarritoVacio } from "@/components/carrito/CarritoVacio";
-import { productosMock, Producto } from "@/data/productosMock";
 import { PaymentIcons } from "@/components/ui/PaymentIcons";
+import { useCarrito } from "@/contexts/CarritoContext";
+import { usePedido } from "@/contexts/PedidoContext";
 
 export default function Carrito() {
-  const [productos, setProductos] = useState<Producto[]>(productosMock);
+  const { carrito, aumentarCantidad, disminuirCantidad, eliminarDelCarrito } = useCarrito();
+  const { setPedido } = usePedido(); 
+  const router = useRouter();
 
-  const aumentarCantidad = (id: string) => {
-    setProductos((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, cantidad: p.cantidad + 1 } : p))
-    );
+  const productosValidos = carrito.filter((p) => p.cantidad > 0);
+  const total = productosValidos.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+  const cantidadTotal = productosValidos.reduce((acc, p) => acc + p.cantidad, 0);
+
+  const procederAlPago = () => {
+    setPedido({
+      productos: productosValidos,
+      total,
+      cantidad: cantidadTotal,
+      fecha: new Date().toISOString(),
+    });
+
+    router.push("/checkout");
   };
-
-  const disminuirCantidad = (id: string) => {
-    setProductos((prev) =>
-      prev.map((p) =>
-        p.id === id && p.cantidad > 1 ? { ...p, cantidad: p.cantidad - 1 } : p
-      )
-    );
-  };
-
-  const eliminarProducto = (id: string) => {
-    setProductos((prev) => prev.filter((p) => p.id !== id));
-  };
-
-  const total = productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
 
   return (
     <>
@@ -41,26 +38,23 @@ export default function Carrito() {
           Tu Carrito
         </h2>
 
-        {productos.filter(p => p.cantidad > 0).length === 0 ? (
+        {productosValidos.length === 0 ? (
           <CarritoVacio />
         ) : (
           <div className="flex flex-col lg:flex-row gap-10">
             {/* Lista del carrito con scroll */}
             <div className="lg:w-2/3 max-h-[450px] overflow-y-auto p-4 pr-2 shadow-inner border rounded-lg">
               <CarritoLista
-                productos={productos.filter(p => p.cantidad > 0)}
+                productos={productosValidos}
                 aumentarCantidad={aumentarCantidad}
                 disminuirCantidad={disminuirCantidad}
-                eliminarProducto={eliminarProducto}
+                eliminarProducto={eliminarDelCarrito}
               />
             </div>
 
-            {/* Resumen + Métodos de pago en columna */}
+            {/* Resumen + Métodos de pago + Botón */}
             <div className="lg:w-1/3 flex flex-col items-center gap-6">
-              <ResumenPedido
-                total={total}
-                cantidad={productos.reduce((acc, p) => acc + p.cantidad, 0)}
-              />
+              <ResumenPedido total={total} cantidad={cantidadTotal} />
               <div className="w-full flex justify-center">
                 <PaymentIcons />
               </div>

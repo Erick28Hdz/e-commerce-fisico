@@ -1,8 +1,8 @@
 // components/productos/ProductoDetalleVisual.tsx
-
+import { useState } from "react";
 import { GaleriaProducto } from "./GaleriaProducto";
 import { ProductoStock } from "./sec-derecha/ProductoStock";
-import { ProductoCantidad } from "./sec-derecha/ProductoCantidad";
+import { ProductoCantidad } from "./sec-izquierda/ProductoCantidad";
 import { BotonesAccion } from "./sec-izquierda/BotonesAccion";
 import { Producto } from "@/data/productosMock";
 
@@ -11,6 +11,7 @@ interface Props {
 }
 
 export default function ProductoDetalleVisual({ producto }: Props) {
+  const [cantidad, setCantidad] = useState<number>(1);
   return (
     <div className="flex flex-col md:flex-row gap-8">
       {/* Contenido principal del producto */}
@@ -33,12 +34,12 @@ export default function ProductoDetalleVisual({ producto }: Props) {
             />
           </div>
           <div className="flex-shrink-0">
-            <ProductoCantidad />
+            <ProductoCantidad cantidad={cantidad} setCantidad={setCantidad} />
           </div>
         </div>
         {/* Botones */}
         <div className="">
-          <BotonesAccion />
+          <BotonesAccion producto={producto} cantidad={cantidad} />
         </div>
       </div>
     </div>
