@@ -18,6 +18,8 @@ interface ProductoDetallesProps {
   producto: {
     id: string;
     nombre: string;
+    slug: string;
+    imagen: string;
     categoria: string;
     precio: number;
     precioAntiguo?: number;
@@ -95,7 +97,7 @@ export const ProductoDetalles: React.FC<{ producto: ProductoDetallesProps["produ
 
       <div className="mt-6 flex justify-between">
         <div><ProductoColor color={producto.color} /></div>
-        <div><ProductoAcciones /></div>
+        <div>{producto && <ProductoAcciones producto={producto} />}</div>
       </div>
     </div>
   );

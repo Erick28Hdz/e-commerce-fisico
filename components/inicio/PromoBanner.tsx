@@ -1,6 +1,6 @@
 export default function PromoBanner() {
   return (
-    <section className="bg-[var(--color-accent)] text-[var(--color-text-primary)] py-4 px-6 text-center shadow-md">
+    <section className="bg-[var(--color-accent)] text-[var(--color-text-primary)] py-4 px-6 text-center shadow-md rounded-lg">
       <p className="text-base md:text-lg font-semibold flex items-center justify-center gap-2">
         <span role="img" aria-label="alerta">🚚</span>
         <span>

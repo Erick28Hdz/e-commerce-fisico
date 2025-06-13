@@ -3,16 +3,16 @@ export const footerSections = [
         title: "Empresa",
         links: [
             { label: "Nosotros", href: "/nosotros" },
-            { label: "Carreras", href: "/carreras" },
-            { label: "Blog", href: "/blog" },
+            { label: "Carreras", href: "" },
+            { label: "Blog", href: "" },
         ],
     },
     {
         title: "Soporte",
         links: [
             { label: "Contacto", href: "/contacto" },
-            { label: "FAQs", href: "/faqs" },
-            { label: "Términos y condiciones", href: "/terminos" },
+            { label: "FAQs", href: "/nosotros/faq" },
+            { label: "Términos y condiciones", href: "/nosotros/terminos" },
         ],
     },
 ];

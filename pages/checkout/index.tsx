@@ -9,47 +9,63 @@ import { useCarrito } from '@/contexts/CarritoContext';
 export default function CheckoutPage() {
   const { usuario } = useSesion();
   const router = useRouter();
-  const { carrito, vaciarCarrito } = useCarrito(); // <--- usamos el carrito aquí
+  const { carrito, vaciarCarrito } = useCarrito();
 
+  const [productos, setProductos] = useState<any[]>([]);
   const [direccion, setDireccion] = useState('');
   const [metodoPago, setMetodoPago] = useState('tarjeta');
 
   useEffect(() => {
     if (!usuario) {
       router.push('/login');
+      return;
     }
 
+    // Si el carrito está vacío, intentamos usar compra directa
     if (carrito.length === 0) {
-      router.push('/carrito');
+      const compraDirecta = localStorage.getItem('compra_directa');
+      if (compraDirecta) {
+        const { producto, cantidad } = JSON.parse(compraDirecta);
+        setProductos([{ ...producto, cantidad }]);
+      } else {
+        router.push('/carrito'); // Si no hay nada, regresamos al carrito
+      }
+    } else {
+      setProductos(carrito);
     }
-  }, [usuario, router, carrito]);
+  }, [usuario, carrito, router]);
 
-  const total = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
-  const cantidad = carrito.reduce((acc, p) => acc + p.cantidad, 0);
+  const total = productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+  const cantidad = productos.reduce((acc, p) => acc + p.cantidad, 0);
 
   const handleConfirmarPedido = () => {
     const pedido = {
-      productos: carrito,
+      productos,
       direccion,
       metodoPago,
       cantidad,
       total,
       fecha: new Date().toISOString(),
-      id: Math.random().toString(36).substring(2, 10).toUpperCase(), // Generar un ID aquí
+      id: Math.random().toString(36).substring(2, 10).toUpperCase(),
     };
 
-    localStorage.setItem('pedido_reciente', JSON.stringify(pedido)); // Guardar en localStorage
+    localStorage.setItem('pedido_reciente', JSON.stringify(pedido));
 
-    // Guarda también una lista de todos los pedidos (opcional)
-    const pedidosGuardados = JSON.parse(localStorage.getItem('pedidos') || '[]')
-    pedidosGuardados.push(pedido)
-    localStorage.setItem('pedidos', JSON.stringify(pedidosGuardados))
+    // Agregar al historial
+    const pedidosPrevios = JSON.parse(localStorage.getItem('pedidos') || '[]');
+    pedidosPrevios.push(pedido);
+    localStorage.setItem('pedidos', JSON.stringify(pedidosPrevios));
 
-    vaciarCarrito(); // Limpiamos el carrito
+    // Limpiar solo si vino del carrito
+    if (carrito.length > 0) vaciarCarrito();
+
+    // También podrías limpiar la compra directa si quieres
+    localStorage.removeItem('compra_directa');
+
     router.push('/pedido/confirmado');
   };
 
-  if (carrito.length === 0) return null;
+  if (productos.length === 0) return null;
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-[var(--color-bg-light)] rounded-xl shadow">
@@ -58,7 +74,6 @@ export default function CheckoutPage() {
       </h2>
 
       <div className="space-y-4">
-        {/* Dirección */}
         <div>
           <label className="block mb-1 font-medium">Dirección de Envío</label>
           <input
@@ -70,7 +85,6 @@ export default function CheckoutPage() {
           />
         </div>
 
-        {/* Método de pago */}
         <div>
           <label className="block mb-1 font-medium">Método de Pago</label>
           <select
@@ -84,13 +98,12 @@ export default function CheckoutPage() {
           </select>
         </div>
 
-        {/* Resumen */}
         <div className="bg-white p-4 rounded-md border mt-4">
           <h3 className="text-lg font-semibold text-[var(--color-principal)] mb-2">
             Resumen del Pedido
           </h3>
           <ul className="mb-2">
-            {carrito.map((p) => (
+            {productos.map((p) => (
               <li key={p.id}>
                 {p.nombre} x {p.cantidad} = ${(p.precio * p.cantidad).toFixed(2)}
               </li>
@@ -100,7 +113,6 @@ export default function CheckoutPage() {
           <p className="font-bold text-lg">Total: ${total.toFixed(2)}</p>
         </div>
 
-        {/* Confirmar */}
         <Button onClick={handleConfirmarPedido} className="w-full py-2">
           Confirmar Pedido
         </Button>

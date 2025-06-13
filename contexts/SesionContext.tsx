@@ -11,22 +11,21 @@ interface SesionContextType {
   usuario: Usuario | null;
   login: (usuario: Usuario) => void;
   logout: () => void;
+  estaAutenticado: boolean;
 }
 
-// 👉 Valor por defecto (solo para evitar errores al crear el contexto)
 const SesionContext = createContext<SesionContextType>({
   usuario: null,
   login: () => { },
   logout: () => { },
+  estaAutenticado: false,
 });
 
-// ✅ Hook personalizado para consumir el contexto
 export const useSesion = () => useContext(SesionContext);
 
-// ✅ Componente proveedor de contexto
 export const SesionProvider = ({ children }: { children: React.ReactNode }) => {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
-  const router = useRouter(); 
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -35,7 +34,6 @@ export const SesionProvider = ({ children }: { children: React.ReactNode }) => {
       if (usuarioGuardado) {
         const usuarioParseado = JSON.parse(usuarioGuardado);
 
-        // Validamos que el objeto tenga la estructura esperada
         if (
           typeof usuarioParseado === 'object' &&
           usuarioParseado !== null &&
@@ -44,7 +42,6 @@ export const SesionProvider = ({ children }: { children: React.ReactNode }) => {
         ) {
           setUsuario(usuarioParseado);
         } else {
-          // Si no es válido, limpiamos
           localStorage.removeItem('usuarioLogueado');
         }
       }
@@ -62,11 +59,13 @@ export const SesionProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     setUsuario(null);
     localStorage.removeItem('usuarioLogueado');
-    router.replace('/login'); // 🔁 redirige sin posibilidad de volver
+    router.replace('/login');
   };
 
+  const estaAutenticado = !!usuario;
+
   return (
-    <SesionContext.Provider value={{ usuario, login, logout }}>
+    <SesionContext.Provider value={{ usuario, login, logout, estaAutenticado }}>
       {children}
     </SesionContext.Provider>
   );

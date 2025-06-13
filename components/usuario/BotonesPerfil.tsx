@@ -24,7 +24,7 @@ export default function BotonesPerfil({ onLogout }: BotonesPerfilProps) {
         Ver historial de pedidos
       </Button>
       <Button
-        onClick={() => router.push("/usuarios/HistorialPedidos")}
+        onClick={() => router.push("/usuarios/guardados")}
         variant="outline"
       >
         Ver productos guardados

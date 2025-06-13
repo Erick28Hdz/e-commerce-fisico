@@ -3,9 +3,15 @@ import { Heart, Share2, X, Facebook, Twitter, Linkedin, Mail } from "lucide-reac
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link"
 import { TooltipUniversal } from "@/components/ui/Tooltip";
+import { useProductoGuardado } from "@/hooks/useProductoGuardado";
+import type { Producto } from "@/data/productosMock";
 
-export const ProductoAcciones: React.FC = () => {
-  const [guardado, setGuardado] = useState(false);
+type Props = {
+  producto: Producto;
+};
+
+export const ProductoAcciones: React.FC<Props> = ({ producto }) => {
+  const { guardado, toggleGuardado } = useProductoGuardado(producto);
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
 
   const redes = [
@@ -18,48 +24,39 @@ export const ProductoAcciones: React.FC = () => {
   return (
     <div className="flex flex-col gap-2 mt-4 relative">
       <div className="flex">
-        <div className="relative group">
-          <TooltipUniversal texto="Guardar producto">
-            {/* Botón de guardar */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setGuardado(!guardado)}
-              className={guardado ? "text-red-600" : "text-[var(--color-principal)]"}
-            >
-              <Heart fill={guardado ? "red" : "none"} size={22} />
-            </Button>
-          </TooltipUniversal>
-        </div>
-        <div className="relative group">
-          <TooltipUniversal texto="Compartir producto">
-            {/* Botón de compartir */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMostrarOpciones(!mostrarOpciones)}
-              className="text-[var(--color-principal)]"
-            >
-              <Share2 size={22} />
-            </Button>
-          </TooltipUniversal>
-        </div>
+        <TooltipUniversal texto="Guardar producto">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleGuardado}
+            className={guardado ? "text-red-600" : "text-[var(--color-principal)]"}
+          >
+            <Heart fill={guardado ? "red" : "none"} size={22} />
+          </Button>
+        </TooltipUniversal>
+
+        <TooltipUniversal texto="Compartir producto">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setMostrarOpciones(!mostrarOpciones)}
+            className="text-[var(--color-principal)]"
+          >
+            <Share2 size={22} />
+          </Button>
+        </TooltipUniversal>
       </div>
 
-      {/* Menú de compartir */}
       {mostrarOpciones && (
-        <div
-          className="absolute top-10 right-0 z-10 w-40 rounded-lg shadow-md p-3"
+        <div className="absolute top-10 right-0 z-10 w-40 rounded-lg shadow-md p-3"
           style={{
             backgroundColor: "var(--color-bg-light)",
             border: "1px solid var(--color-accent)",
-            color: "var(--color-text-primary)",
+            color: "var(--color-text-primary)"
           }}
         >
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-semibold text-[var(--color-principal)]">
-              Compartir en:
-            </span>
+            <span className="text-sm font-semibold text-[var(--color-principal)]">Compartir en:</span>
             <Button
               variant="ghost"
               size="icon"

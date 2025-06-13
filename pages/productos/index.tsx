@@ -5,8 +5,8 @@ import { productosMock } from "@/data/productosMock";
 import SidebarCategorias from "@/components/productos/sidebar/SidebarCategorias";
 import ProductoCard from "@/components/productos/tarjeta/ProductCard";
 import Paginacion from "@/components/ui/Paginacion";
-
 import HeroCarrusel from "@/components/ui/HeroBanners";
+import PromoBanner from "@/components/inicio/PromoBanner";
 
 const PRODUCTOS_POR_PAGINA = 9;
 
@@ -129,6 +129,9 @@ export default function ProductosPage() {
             onCambiarPagina={manejarCambioPagina}
           />
         </main>
+      </div>
+      <div className="mt-6">
+        <PromoBanner />
       </div>
     </>
   );

@@ -19,19 +19,8 @@ export default function Nosotros() {
           de soluciones digitales centradas en el usuario.
         </p>
 
-        {/* Imagen centrada */}
-        <div className="w-full flex justify-center mb-8">
-          <Image
-            src="/assets/principales/teamwork.webp"
-            alt="Nuestro equipo"
-            width={600}
-            height={400}
-            className="rounded-xl shadow-lg"
-          />
-        </div>
-
         {/* Enlaces informativos */}
-        <div className="flex flex-col md:flex-row justify-center gap-4">
+        <div className="flex flex-col md:flex-row justify-center gap-4 mb-6">
           <Link href="/nosotros/faq" variant="ghost">
             Preguntas Frecuentes
           </Link>
@@ -41,6 +30,17 @@ export default function Nosotros() {
           <Link href="/nosotros/politica" variant="ghost">
             Política de Privacidad
           </Link>
+        </div>
+
+        {/* Imagen centrada */}
+        <div className="w-full flex justify-center mb-8">
+          <Image
+            src="/assets/principales/teamwork.webp"
+            alt="Nuestro equipo"
+            width={600}
+            height={400}
+            className="rounded-xl shadow-lg"
+          />
         </div>
       </Section>
     </>

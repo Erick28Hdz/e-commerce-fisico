@@ -55,7 +55,9 @@ export default function FormularioContacto() {
         placeholder="Escribe tu mensaje aquí..."
         rows={5}
       />
-      <Button type="submit">Enviar</Button>
+      <div className="flex justify-center">
+        <Button type="submit">Enviar</Button>
+      </div>
 
       {status === "success" && (
         <Alert type="success" message="Mensaje enviado correctamente." />
