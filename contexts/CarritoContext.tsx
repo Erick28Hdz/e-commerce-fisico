@@ -1,5 +1,7 @@
-// contexts/CarritoContext.tsx
-import { createContext, useContext, useState, ReactNode } from "react";
+'use client'
+
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import { Producto } from "@/data/productosMock";
 
 type CarritoItem = Producto & { cantidad: number };
@@ -11,18 +13,32 @@ type CarritoContextType = {
   vaciarCarrito: () => void;
   aumentarCantidad: (id: string) => void;
   disminuirCantidad: (id: string) => void;
+  comprarAhora: (producto: Producto, cantidad: number) => void;
 };
 
 const CarritoContext = createContext<CarritoContextType | undefined>(undefined);
 
 export function CarritoProvider({ children }: { children: ReactNode }) {
   const [carrito, setCarrito] = useState<CarritoItem[]>([]);
+  const router = useRouter();
+
+  // ✅ Cargar carrito desde localStorage al iniciar
+  useEffect(() => {
+    const carritoGuardado = localStorage.getItem('carrito');
+    if (carritoGuardado) {
+      setCarrito(JSON.parse(carritoGuardado));
+    }
+  }, []);
+
+  // ✅ Guardar carrito en localStorage cuando cambia
+  useEffect(() => {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+  }, [carrito]);
 
   const agregarAlCarrito = (producto: Producto, cantidad: number = 1) => {
     setCarrito((prev) => {
       const existe = prev.find((p) => p.id === producto.id);
       if (existe) {
-        // Si ya existe, sumamos la nueva cantidad
         return prev.map((p) =>
           p.id === producto.id ? { ...p, cantidad: p.cantidad + cantidad } : p
         );
@@ -34,9 +50,7 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
 
   const aumentarCantidad = (id: string) => {
     setCarrito((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, cantidad: p.cantidad + 1 } : p
-      )
+      prev.map((p) => p.id === id ? { ...p, cantidad: p.cantidad + 1 } : p)
     );
   };
 
@@ -54,6 +68,13 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
 
   const vaciarCarrito = () => setCarrito([]);
 
+  // ✅ NUEVO: Función comprarAhora
+  const comprarAhora = (producto: Producto, cantidad: number) => {
+    const compraDirecta = { producto, cantidad };
+    localStorage.setItem('compra_directa', JSON.stringify(compraDirecta));
+    router.push('/checkout');
+  };
+
   return (
     <CarritoContext.Provider
       value={{
@@ -63,6 +84,7 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
         vaciarCarrito,
         aumentarCantidad,
         disminuirCantidad,
+        comprarAhora,
       }}
     >
       {children}

@@ -68,7 +68,7 @@ export default function ProductoPage() {
         {/* Sección de recomendados para ti */}
         <ProductosRecomendados />
 
-        <div className="mt-10">
+        <div id="reseñas" className="mt-10">
           <ProductoReviews producto={producto} initialReviews={reseñasDelProducto} />
         </div>
       </div>

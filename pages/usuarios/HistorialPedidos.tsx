@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Section } from '@/components/ui/Section'
+import Link from 'next/link'
+import { PedidoCard } from '@/components/carrito/PedidoCard'
+import { Button } from '@/components/ui/Button'
+import Paginacion from '@/components/ui/Paginacion'
 
 interface Producto {
   nombre: string
   cantidad: number
+  imagen: string
+  precio?: number
 }
 
 interface Pedido {
@@ -11,19 +17,49 @@ interface Pedido {
   estado: string
   productos: Producto[]
   total: number
+  direccion?: string
+  metodoPago?: string
+  fecha?: string
 }
 
-const PedidoDetalle = () => {
+const PEDIDOS_POR_PAGINA = 3
+
+const PedidoHistorial = () => {
   const [pedidos, setPedidos] = useState<Pedido[]>([])
+  const [paginaActual, setPaginaActual] = useState(1)
+  const [expandido, setExpandido] = useState<{ [id: string]: boolean }>({})
 
   useEffect(() => {
     const historialGuardado = localStorage.getItem('historial_pedidos')
     if (historialGuardado) {
-      setPedidos(JSON.parse(historialGuardado))
+      const historial = JSON.parse(historialGuardado)
+      setPedidos(historial)
+      localStorage.setItem('pedidos', JSON.stringify(historial))
     }
   }, [])
 
-  if (pedidos.length === 0) return <p className="text-center mt-8">No hay pedidos recientes.</p>
+  const totalPaginas = Math.ceil(pedidos.length / PEDIDOS_POR_PAGINA)
+  const inicio = (paginaActual - 1) * PEDIDOS_POR_PAGINA
+  const pedidosPagina = pedidos.slice(inicio, inicio + PEDIDOS_POR_PAGINA)
+
+  const volverAComprar = (productos: Producto[]) => {
+    const carritoStr = localStorage.getItem('carrito')
+    const carrito = carritoStr ? JSON.parse(carritoStr) : []
+    const nuevoCarrito = [...carrito, ...productos]
+    localStorage.setItem('carrito', JSON.stringify(nuevoCarrito))
+    window.location.href = '/carrito'
+  }
+
+  const toggleExpandido = (id: string) => {
+    setExpandido((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }))
+  }
+
+  if (pedidos.length === 0) {
+    return <p className="text-center mt-8">No hay pedidos recientes.</p>
+  }
 
   return (
     <Section>
@@ -32,30 +68,43 @@ const PedidoDetalle = () => {
       </div>
 
       <div className="space-y-6 mt-6">
-        {pedidos.map((pedido) => (
-          <div
-            key={pedido.id}
-            className="p-6 bg-white rounded-lg shadow-md max-w-xl mx-auto"
-          >
-            <h5 className="text-xl font-bold mb-2 text-[var(--color-principal)]">
-              Pedido #{pedido.id}
-            </h5>
-            <p className="mb-2 font-medium text-[var(--color-accent)]">
-              Estado: {pedido.estado}
-            </p>
-            <p className="mb-4 font-semibold">Total: ${pedido.total.toFixed(2)}</p>
-            <ul className="list-disc pl-6 text-sm text-gray-700">
-              {pedido.productos.map((producto, index) => (
-                <li key={index}>
-                  {producto.nombre} x {producto.cantidad}
-                </li>
-              ))}
-            </ul>
+        {pedidosPagina.map((pedido) => (
+          <div key={pedido.id} className="transition rounded-lg p-4 border border-[var(--color-bg-secondary)]">
+            {/* Click para expandir/cerrar */}
+            <div className="cursor-pointer" onClick={() => toggleExpandido(pedido.id)}>
+              <PedidoCard
+                id={pedido.id}
+                estado={pedido.estado}
+                total={pedido.total}
+                productos={pedido.productos}
+              />
+            </div>
+
+            {/* Contenedor con animación */}
+            <div
+              className={`transition-all duration-500 ease-in-out overflow-hidden ${expandido[pedido.id] ? 'max-h-[1000px] mt-4' : 'max-h-0'
+                }`}
+            >
+              <div className="mt-4 flex justify-end gap-4">
+                <Button onClick={() => volverAComprar(pedido.productos)}>
+                  Volver a comprar
+                </Button>
+                <Button variant="secondary" onClick={() => window.location.href = `/pedido/${pedido.id}`}>
+                  Ver detalles
+                </Button>
+              </div>
+            </div>
           </div>
         ))}
       </div>
+
+      <Paginacion
+        paginaActual={paginaActual}
+        totalPaginas={totalPaginas}
+        onCambiarPagina={setPaginaActual}
+      />
     </Section>
   )
 }
 
-export default PedidoDetalle
+export default PedidoHistorial

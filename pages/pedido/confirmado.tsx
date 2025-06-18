@@ -20,6 +20,7 @@ export default function PedidoConfirmado() {
       const historial = historialStr ? JSON.parse(historialStr) : []
       const nuevoHistorial = [nuevoPedido, ...historial] // puedes limitar longitud si quieres
       localStorage.setItem('historial_pedidos', JSON.stringify(nuevoHistorial))
+      localStorage.setItem('pedidos', JSON.stringify(nuevoHistorial))
     }
   }, [])
 
