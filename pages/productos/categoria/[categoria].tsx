@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import { useState, useMemo } from "react";
-import { productosMock } from "@/data/productosMock";
+import { useEffect, useState, useMemo } from "react";
 import { Container } from "@/components/ui/container";
 import SidebarCategorias from "@/components/productos/sidebar/SidebarCategorias";
 import ProductoCard from "@/components/productos/tarjeta/ProductCard";
@@ -8,29 +7,55 @@ import Paginacion from "@/components/ui/Paginacion";
 
 const PRODUCTOS_POR_PAGINA = 9;
 
+interface Producto {
+  id: string;
+  nombre: string;
+  slug: string;
+  precio: number;
+  precioAntiguo?: number;
+  descuento?: number;
+  mensaje?: string;
+  imagen: string;
+  stock: number;
+  categoria: string;
+}
+
 export default function ProductosPorCategoriaPage() {
   const router = useRouter();
   const { categoria } = router.query;
 
+  const [productos, setProductos] = useState<Producto[]>([]);
   const [paginaActual, setPaginaActual] = useState(1);
+  const [loading, setLoading] = useState(true);
 
-  // Filtrar por categoría
-  const productosFiltrados = useMemo(() => {
-    if (!categoria || typeof categoria !== "string") return productosMock;
-    return productosMock.filter(
-      (producto) => producto.categoria === categoria
-    );
+  const categoriaNormalizada = typeof categoria === "string" ? categoria : "Todos";
+
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/productos?categoria=${categoriaNormalizada}`);
+        const data = await res.json();
+        setProductos(data);
+      } catch (error) {
+        console.error("Error al obtener productos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (categoria) {
+      fetchProductos();
+    }
   }, [categoria]);
 
-  // Paginación
-  const indiceUltimoProducto = paginaActual * PRODUCTOS_POR_PAGINA;
-  const indicePrimerProducto = indiceUltimoProducto - PRODUCTOS_POR_PAGINA;
-  const productosPaginados = productosFiltrados.slice(
-    indicePrimerProducto,
-    indiceUltimoProducto
-  );
+  const productosPaginados = useMemo(() => {
+    const indiceUltimo = paginaActual * PRODUCTOS_POR_PAGINA;
+    const indicePrimero = indiceUltimo - PRODUCTOS_POR_PAGINA;
+    return productos.slice(indicePrimero, indiceUltimo);
+  }, [productos, paginaActual]);
 
-  const totalPaginas = Math.ceil(productosFiltrados.length / PRODUCTOS_POR_PAGINA);
+  const totalPaginas = Math.ceil(productos.length / PRODUCTOS_POR_PAGINA);
 
   const manejarCambioPagina = (pagina: number) => {
     if (pagina >= 1 && pagina <= totalPaginas) {
@@ -41,27 +66,31 @@ export default function ProductosPorCategoriaPage() {
   return (
     <Container>
       <div className="flex gap-8">
-        <SidebarCategorias onFiltrar={function (filtros: any): void {
-          throw new Error("Function not implemented.");
-        } } />
+        <SidebarCategorias onFiltrar={() => {}} /> {/* Puedes dejarlo vacío o pasar lógica */}
         <main className="flex-1">
-          <h3 className="mb-2 text-center capitalize">
-            Productos en "{categoria}"
+          <h3 className="mb-4 text-center text-xl capitalize text-[var(--color-principal)]">
+            Productos en "{categoriaNormalizada}"
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {productosPaginados.map((producto) => (
-              <ProductoCard
-                key={producto.id}
-                {...producto}
-              />
-            ))}
-          </div>
 
-          <Paginacion
-            paginaActual={paginaActual}
-            totalPaginas={totalPaginas}
-            onCambiarPagina={manejarCambioPagina}
-          />
+          {loading ? (
+            <p className="text-center text-gray-500">Cargando productos...</p>
+          ) : productosPaginados.length === 0 ? (
+            <p className="text-center text-gray-400">No hay productos en esta categoría.</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {productosPaginados.map((producto) => (
+                  <ProductoCard key={producto.id} {...producto} />
+                ))}
+              </div>
+
+              <Paginacion
+                paginaActual={paginaActual}
+                totalPaginas={totalPaginas}
+                onCambiarPagina={manejarCambioPagina}
+              />
+            </>
+          )}
         </main>
       </div>
     </Container>

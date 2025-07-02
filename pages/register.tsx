@@ -28,7 +28,7 @@ export default function RegistroUsuario() {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!form.nombre || !form.correo || !form.contraseña || !form.confirmar) {
@@ -41,21 +41,36 @@ export default function RegistroUsuario() {
             return;
         }
 
-        localStorage.setItem("usuarioRegistrado", JSON.stringify({
-            nombre: form.nombre,
-            correo: form.correo,
-            contraseña: form.contraseña,
-            fechaRegistro: new Date().toISOString().split("T")[0],
-        }));
+        try {
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: form.nombre,
+                    email: form.correo,
+                    password: form.contraseña,
+                }),
+            });
 
-        router.push("/login");
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || "Error al registrar usuario");
+            }
+
+            // Si llega aquí, todo salió bien
+            console.log("Usuario registrado:", data.user);
+            router.push("/login");
+        } catch (err: any) {
+            setError(err.message);
+        }
     };
 
     return (
         <>
-        <div className="mb-2">
-            <VolverAtras />
-        </div>
+            <div className="mb-2">
+                <VolverAtras />
+            </div>
             <Section className="max-w-md mx-auto">
                 <h2 className="text-2xl font-bold mb-4 text-[var(--color-principal)]">
                     Crear una cuenta

@@ -2,7 +2,7 @@
 
 import { useCarrito } from "@/contexts/CarritoContext";
 import { Button } from "@/components/ui/Button";
-import { Producto } from "@/data/productosMock";
+import type { Producto } from "@prisma/client";
 
 type Props = {
   producto: Producto;

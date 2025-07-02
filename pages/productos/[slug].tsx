@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { productosMock } from "@/data/productosMock";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
+import type { Producto as ProductoPrisma } from "@prisma/client";
 import { ProductoDetalles } from "@/components/productos/detallado/ProductoDetalles";
 import VolverAtras from "@/components/ui/VolverAtras";
 import ProductoDetalleVisual from "@/components/productos/detallado/ProductoDetalleVisual";
@@ -10,22 +10,41 @@ import { SeccionConfianza } from "@/components/productos/detallado/sec-izquierda
 import ProductosMismaCategoria from "@/components/productos/detallado/secciones/ProductosMismaCategoria";
 import ProductosMasVendidos from "@/components/productos/detallado/secciones/ProductosMasVendidos";
 import ProductosRecomendados from "@/components/productos/detallado/secciones/ProductosRecomendados";
-import { reviewsMock } from "@/data/reviewsMock";
+import { normalizarProducto } from "@/utils/normalizarProducto";
 
 export default function ProductoPage() {
   const router = useRouter();
   const { slug } = router.query;
+  const [producto, setProducto] = useState<ProductoPrisma | null>(null);
 
-  const producto = useMemo(() => {
-    if (!slug || typeof slug !== "string") return null;
-    return productosMock.find((p) => p.slug === slug);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!slug || typeof slug !== "string") return;
+
+    const fetchProducto = async () => {
+      try {
+        const res = await fetch(`/api/productos/${slug}`);
+        if (!res.ok) {
+          throw new Error("Producto no encontrado");
+        }
+        const data = await res.json();
+        const productoNormalizado = normalizarProducto(data);
+        setProducto(productoNormalizado);
+      } catch (error) {
+        console.error(error);
+        setProducto(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducto();
   }, [slug]);
 
-  // Filtras reseñas para el producto actual:
-  const reseñasDelProducto = useMemo(() => {
-    if (!producto) return [];
-    return reviewsMock.filter((r) => r.productoId === producto.id);
-  }, [producto]);
+  if (loading) {
+    return <div className="p-10 text-center">Cargando producto...</div>;
+  }
 
   if (!producto) {
     return (
@@ -35,41 +54,37 @@ export default function ProductoPage() {
     );
   }
 
+
+
   return (
     <>
       <Head>
-        <title>nombre producto | SuperTienda</title>
+        <title>{producto.nombre} | SuperTienda</title>
       </Head>
       <div className="p-6 md:p-10 max-w-8xl mx-auto bg-[var(--color-bg-light)] rounded-2xl shadow-xl">
-        {/* Botón de volver al inicio del contenido */}
         <div className="mb-2">
           <VolverAtras />
         </div>
-        {/* Contenido del producto */}
+
         <div className="flex flex-col md:flex-row gap-8">
           <ProductoDetalleVisual producto={producto} />
-          {/* Detalles del producto */}
           <ProductoDetalles producto={producto} />
         </div>
 
-        {/* Sección de confianza */}
-        <div className="">
+        <div>
           <SeccionConfianza />
         </div>
 
-        {/* Sección de productos de la misma categoría */}
         <ProductosMismaCategoria
           categoria={producto.categoria}
           actualSlug={producto.slug}
         />
-        {/* Sección de más vendidos */}
-        <ProductosMasVendidos />
 
-        {/* Sección de recomendados para ti */}
+        <ProductosMasVendidos />
         <ProductosRecomendados />
 
         <div id="reseñas" className="mt-10">
-          <ProductoReviews producto={producto} initialReviews={reseñasDelProducto} />
+          <ProductoReviews producto={producto} initialReviews={[]} />
         </div>
       </div>
     </>

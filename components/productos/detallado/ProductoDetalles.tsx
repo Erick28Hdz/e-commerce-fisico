@@ -22,16 +22,16 @@ interface ProductoDetallesProps {
     imagen: string;
     categoria: string;
     precio: number;
-    precioAntiguo?: number;
-    descuento?: number;
+    precioAntiguo: number | null; // <--- cambia esto
+    descuento: number | null;     // <--- y este también
     variantes: string[];
     color: string;
     calificacion?: number;
     stock: number;
-    mensaje?: string;
+    mensaje: string | null;       // <--- y este también
     descripcion: string;
     referencia: string;
-  };
+  },
   review: {
   }
 }
@@ -81,8 +81,8 @@ export const ProductoDetalles: React.FC<{ producto: ProductoDetallesProps["produ
       <div className="mt-4">
         <ProductoPrecio
           precio={producto.precio}
-          precioAntiguo={producto.precioAntiguo}
-          descuento={producto.descuento}
+          precioAntiguo={producto.precioAntiguo ?? undefined}
+          descuento={producto.descuento ?? undefined}
         />
       </div>
       <div className="mt-2">

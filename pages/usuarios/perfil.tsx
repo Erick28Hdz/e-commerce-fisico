@@ -1,62 +1,31 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import AvatarUsuario from "@/components/usuario/AvatarUsuario";
 import DatosPersonales from "@/components/usuario/DatosPersonales";
 import BotonesPerfil from "@/components/usuario/BotonesPerfil";
 import { Section } from "@/components/ui/Section";
-
-type Usuario = {
-    nombre: string;
-    correo: string;
-    rol: string;
-    fechaRegistro: string;
-    direccion: string;
-    ciudad: string;
-    pais: string;
-    metodoPago: string;
-    ultimaCompra: string;
-    suscripcionActiva: boolean;
-};
+import { useSesion } from "@/contexts/SesionContext";
 
 export default function PerfilUsuario() {
-    const [usuario, setUsuario] = useState<Usuario | null>(null);
-    const router = useRouter();
+  const { usuario, estaAutenticado, cargando } = useSesion();
+  const router = useRouter();
 
-    useEffect(() => {
-        const email = localStorage.getItem("usuarioLogueado");
-        if (email) {
-            const mock: Usuario = {
-                nombre: "Erick Hernández",
-                correo: email,
-                rol: "Cliente",
-                fechaRegistro: "2024-01-15",
-                direccion: "Calle 123, Edificio X",
-                ciudad: "Bogotá",
-                pais: "Colombia",
-                metodoPago: "Visa terminada en 1234",
-                ultimaCompra: "2024-07-15",
-                suscripcionActiva: true,
-            };
-            setUsuario(mock);
-        } else {
-            router.push("/login");
-        }
-    }, []);
+  useEffect(() => {
+    if (!cargando && !estaAutenticado) {
+      router.push("/login");
+    }
+  }, [cargando, estaAutenticado, router]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("usuarioLogueado");
-        router.push("/login");
-    };
+  if (cargando) return <p className="text-center mt-10">Cargando sesión...</p>;
+  if (!usuario) return null;
 
-    if (!usuario) return null;
-
-    return (
-        <Section className="bg-accent rounded-2xl">
-            <AvatarUsuario nombre={usuario.nombre} />
-            <DatosPersonales {...usuario} />
-            <BotonesPerfil onLogout={handleLogout} />
-        </Section>
-    );
+  return (
+    <Section className="bg-accent rounded-2xl">
+      <AvatarUsuario nombre={usuario.nombre} />
+      <DatosPersonales correo={""} rol={""} fechaRegistro={""} direccion={""} ciudad={""} pais={""} metodoPago={""} ultimaCompra={""} {...usuario} />
+      <BotonesPerfil onLogout={() => router.push("/login")} />
+    </Section>
+  );
 }

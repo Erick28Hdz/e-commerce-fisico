@@ -1,6 +1,6 @@
 // 📄 CarritoLista.tsx
 import ProductoItem from "./ProductoItem";
-import { Producto } from "@/data/productosMock";
+import type { Producto } from '@/types/producto';
 
 interface CarritoListaProps {
   productos: Producto[]; // ✅ corregido aquí

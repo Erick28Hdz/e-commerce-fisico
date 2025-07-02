@@ -1,9 +1,19 @@
-// @/components/productos/ProductosRecomendados.tsx
+import { useEffect, useState } from 'react';
 import ProductoCard from "../../tarjeta/ProductCard";
-import { productosMock } from "@/data/productosMock";
+import type { Producto } from '@prisma/client';
+
+type ProductoConRating = Producto & {
+  rating: number;
+};
 
 export default function ProductosRecomendados() {
-  const recomendados = productosMock.slice(-5); // Simulación simple
+  const [recomendados, setRecomendados] = useState<ProductoConRating[]>([]);
+
+  useEffect(() => {
+    fetch('/api/productos/recomendados')
+      .then((res) => res.json())
+      .then((data: ProductoConRating[]) => setRecomendados(data));
+  }, []);
 
   if (recomendados.length === 0) return null;
 
@@ -18,7 +28,7 @@ export default function ProductosRecomendados() {
               key={producto.slug}
               className="min-w-[250px] max-w-[250px] flex-shrink-0"
             >
-              <ProductoCard {...producto} />
+              <ProductoCard {...producto} rating={producto.rating} />
             </div>
           ))}
         </div>

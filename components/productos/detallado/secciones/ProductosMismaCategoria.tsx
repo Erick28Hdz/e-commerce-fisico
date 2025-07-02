@@ -1,15 +1,28 @@
+'use client'; // si usas App Router; si estás en Pages Router NO lo pongas
+
+import { useEffect, useState } from 'react';
 import ProductoCard from "../../tarjeta/ProductCard";
-import { productosMock } from "@/data/productosMock";
+import type { Producto } from '@prisma/client';
 
 interface Props {
   categoria: string;
   actualSlug: string;
 }
 
+type ProductoConRating = Producto & { rating: number };
+
 export default function ProductosMismaCategoria({ categoria, actualSlug }: Props) {
-  const productosRelacionados = productosMock.filter(
-    (p) => p.categoria === categoria && p.slug !== actualSlug
-  );
+  const [productosRelacionados, setProductosRelacionados] = useState<ProductoConRating[]>([]);
+
+  useEffect(() => {
+    const fetchRelacionados = async () => {
+      const res = await fetch(`/api/productos/relacionados?categoria=${categoria}&slug=${actualSlug}`);
+      const data = await res.json();
+      setProductosRelacionados(data);
+    };
+
+    fetchRelacionados();
+  }, [categoria, actualSlug]);
 
   if (productosRelacionados.length === 0) return null;
 
@@ -24,16 +37,7 @@ export default function ProductosMismaCategoria({ categoria, actualSlug }: Props
               key={producto.slug}
               className="min-w-[250px] max-w-[250px] flex-shrink-0"
             >
-              <ProductoCard
-                id={producto.id}
-                slug={producto.slug}
-                nombre={producto.nombre}
-                imagen={producto.imagen}
-                precio={producto.precio}
-                precioAntiguo={producto.precioAntiguo}
-                descuento={producto.descuento}
-                mensaje={producto.mensaje}
-              />
+              <ProductoCard {...producto} rating={producto.rating} />
             </div>
           ))}
         </div>

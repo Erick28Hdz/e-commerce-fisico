@@ -1,71 +1,52 @@
-'use client';
-import { useRouter } from 'next/navigation';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 
 interface Usuario {
   email: string;
   nombre: string;
+  image?: string;
+  id?: string;
+  rol?: 'admin' | 'cliente'
 }
 
 interface SesionContextType {
   usuario: Usuario | null;
-  login: (usuario: Usuario) => void;
   logout: () => void;
   estaAutenticado: boolean;
+  cargando: boolean; // 👈 nuevo
 }
 
 const SesionContext = createContext<SesionContextType>({
   usuario: null,
-  login: () => { },
-  logout: () => { },
+  logout: () => {},
   estaAutenticado: false,
+  cargando: true, // 👈 nuevo valor por defecto
 });
 
 export const useSesion = () => useContext(SesionContext);
 
 export const SesionProvider = ({ children }: { children: React.ReactNode }) => {
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
-  const router = useRouter();
+  const { data: session, status } = useSession();
 
-  useEffect(() => {
-    try {
-      const usuarioGuardado = localStorage.getItem('usuarioLogueado');
-
-      if (usuarioGuardado) {
-        const usuarioParseado = JSON.parse(usuarioGuardado);
-
-        if (
-          typeof usuarioParseado === 'object' &&
-          usuarioParseado !== null &&
-          'email' in usuarioParseado &&
-          'nombre' in usuarioParseado
-        ) {
-          setUsuario(usuarioParseado);
-        } else {
-          localStorage.removeItem('usuarioLogueado');
-        }
+  const usuario: Usuario | null = session?.user
+    ? {
+        email: session.user.email || '',
+        nombre: session.user.name || '',
+        image: session.user.image || '',
+        id: (session.user as any).id || '',
+        rol: (session.user as any).role || 'cliente',
       }
-    } catch (error) {
-      console.error("Error al parsear usuarioLogueado:", error);
-      localStorage.removeItem('usuarioLogueado');
-    }
-  }, []);
+    : null;
 
-  const login = (usuario: Usuario) => {
-    setUsuario(usuario);
-    localStorage.setItem('usuarioLogueado', JSON.stringify(usuario));
-  };
+  const estaAutenticado = status === 'authenticated';
+  const cargando = status === 'loading'; // 👈
 
   const logout = () => {
-    setUsuario(null);
-    localStorage.removeItem('usuarioLogueado');
-    router.replace('/login');
+    signOut({ callbackUrl: '/login' });
   };
 
-  const estaAutenticado = !!usuario;
-
   return (
-    <SesionContext.Provider value={{ usuario, login, logout, estaAutenticado }}>
+    <SesionContext.Provider value={{ usuario, logout, estaAutenticado, cargando }}>
       {children}
     </SesionContext.Provider>
   );

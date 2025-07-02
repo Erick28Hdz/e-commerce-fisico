@@ -2,37 +2,29 @@
 
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { signIn } from "next-auth/react";
 import { Section } from "@/components/ui/Section";
 import FormularioBase from "@/components/ui/Form";
 import { Button } from "@/components/ui/Button";
 import FormInput from "@/components/ui/Input";
 import { Link } from "@/components/ui/Link";
-import { useSesion } from "@/contexts/SesionContext";
-
-// 🟩 Usuario simulado
-const mockUser = {
-  email: "erick@correo.com",
-  password: "Erick123+",
-  nombre: "Erick Hernández"
-};
 
 export default function LoginUsuario() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-  const { login } = useSesion();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 🟩 Validar contra mockUser
-    if (email === mockUser.email && password === mockUser.password) {
-      login({
-        email: mockUser.email,
-        nombre: mockUser.nombre
-      });
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
 
+    if (result?.ok) {
       router.push("/");
     } else {
       setError("Correo o contraseña incorrectos");

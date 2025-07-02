@@ -1,5 +1,5 @@
 'use client'
-
+import { useAuth } from '@/hooks/useAuth'
 import { FC, useState } from 'react'
 import { useSesion } from '@/contexts/SesionContext'
 import { useCarrito } from '@/contexts/CarritoContext' // 👈 nuevo import
@@ -70,69 +70,118 @@ export const Navbar: FC<NavbarProps> = ({ links, logoText }) => {
   )
 
   return (
-    <header className="border-b bg-principal shadow-sm sticky top-0 z-50">
-      <Container>
-        <div className="flex justify-between items-center h-16">
-          <Logo text={logoText} />
+  <header className="border-b bg-principal shadow-sm sticky top-0 z-50">
+    <Container>
+      <div className="flex justify-between items-center h-16">
+        <Logo text={logoText} />
 
-          {/* Menú escritorio */}
-          <div className="hidden md:flex gap-6 items-center">
-            {links.map(link => (
-              <Link key={link.href} href={link.href}>
-                {link.label}
-              </Link>
-            ))}
-          </div>
+        {/* Menú escritorio */}
+        <div className="hidden md:flex gap-6 items-center">
+          {links.map(link => (
+            <Link key={link.href} href={link.href}>
+              {link.label}
+            </Link>
+          ))}
 
-          {/* Iconos + sesión */}
-          <div className="flex items-center gap-4">
-            {/* Íconos solo en escritorio */}
-            <div className="hidden md:flex gap-4 items-center">
-              <IconLink
-                href="/carrito"
-                icon={ShoppingCart}
-                label="Carrito"
-                badgeCount={cantidadTotal} // 👈 lo pasamos aquí
-              />
-
-              {!usuario ? (
-                <IconLink href="/login" icon={User2} label="Cuenta" />
-              ) : (
-                <div className="relative group">
-                  <Dropdown
-                    trigger={
-                      <div className="flex items-center gap-2 text-accent hover:text-principal transition-colors cursor-pointer">
-                        <User2 size={22} />
-                        <span className="text-base font-medium">{usuario.nombre}</span>
-                      </div>
-                    }
-                  >
-                    <div className="px-4 py-2 text-sm border-b">{usuario.email}</div>
-                    <Dropdown.Item href="/usuarios/perfil">Mi perfil</Dropdown.Item>
-                    <Dropdown.Item href="/usuarios/notificaciones">Notificaciones</Dropdown.Item>
-                    <Dropdown.Item onClick={logout} danger>
-                      Cerrar sesión
-                    </Dropdown.Item>
-                  </Dropdown>
-                </div>
-              )}
-            </div>
-
-            {/* Botón menú móvil */}
-            <MobileMenuToggle
-              isOpen={isMobileMenuOpen}
-              toggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            />
-          </div>
+          {/* Solo para administradores */}
+          {usuario?.rol === 'admin' && (
+            <Link href="/admin/dashboard">
+              Dashboard
+            </Link>
+          )}
         </div>
 
-        {/* Menú móvil desplegable */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden mt-2 flex flex-col space-y-2 pb-4">
-            {renderMobileMenuItems()}
+        {/* Iconos + sesión */}
+        <div className="flex items-center gap-4">
+          {/* Íconos solo en escritorio */}
+          <div className="hidden md:flex gap-4 items-center">
+            <IconLink
+              href="/carrito"
+              icon={ShoppingCart}
+              label="Carrito"
+              badgeCount={cantidadTotal}
+            />
+
+            {!usuario ? (
+              <IconLink href="/login" icon={User2} label="Cuenta" />
+            ) : (
+              <div className="relative group">
+                <Dropdown
+                  trigger={
+                    <div className="flex items-center gap-2 text-accent hover:text-principal transition-colors cursor-pointer">
+                      <User2 size={22} />
+                      <span className="text-base font-medium">{usuario.nombre}</span>
+                    </div>
+                  }
+                >
+                  <div className="px-4 py-2 text-sm border-b">{usuario.email}</div>
+                  <Dropdown.Item href="/usuarios/perfil">Mi perfil</Dropdown.Item>
+                  <Dropdown.Item href="/usuarios/notificaciones">Notificaciones</Dropdown.Item>
+
+                  {/* Agrega acceso rápido al Dashboard en el dropdown si es admin */}
+                  {usuario.rol === 'admin' && (
+                    <Dropdown.Item href="/admin/dashboard">Dashboard</Dropdown.Item>
+                  )}
+
+                  <Dropdown.Item onClick={logout} danger>
+                    Cerrar sesión
+                  </Dropdown.Item>
+                </Dropdown>
+              </div>
+            )}
           </div>
-        )}
-      </Container>
-    </header>
-  )
+
+          {/* Botón menú móvil */}
+          <MobileMenuToggle
+            isOpen={isMobileMenuOpen}
+            toggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          />
+        </div>
+      </div>
+
+      {/* Menú móvil desplegable */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden mt-2 flex flex-col space-y-2 pb-4">
+          {links.map(link => (
+            <Link
+              key={link.href}
+              href={link.href}
+              variant="link"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          <Link href="/carrito" variant="footer" onClick={() => setIsMobileMenuOpen(false)}>
+            Carrito ({cantidadTotal})
+          </Link>
+
+          {/* Solo para admin en móvil */}
+          {usuario?.rol === 'admin' && (
+            <Link href="/admin/dashboard" variant="footer" onClick={() => setIsMobileMenuOpen(false)}>
+              Dashboard
+            </Link>
+          )}
+
+          {!usuario ? (
+            <Link href="/login" variant="footer" onClick={() => setIsMobileMenuOpen(false)}>
+              Mi cuenta
+            </Link>
+          ) : (
+            <>
+              <span className="text-white text-sm px-2">{usuario.email}</span>
+              <button
+                onClick={handleLogout}
+                className="text-sm text-red-400 hover:text-red-600 transition px-2"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </Container>
+  </header>
+)
 }

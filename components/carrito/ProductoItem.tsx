@@ -1,11 +1,12 @@
-// 📄 ProductoItem.tsx
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { Producto } from "@/data/productosMock";
+import type { Producto } from '@prisma/client'; // 👈 Aquí cambiaste esto
+
+type ProductoConCantidad = Producto & { cantidad: number };
 
 interface ProductoItemProps {
-  producto: Producto;
-  aumentarCantidad: (id: string) => void; // 👈 cambiar a string
+  producto: ProductoConCantidad;
+  aumentarCantidad: (id: string) => void;
   disminuirCantidad: (id: string) => void;
   eliminarProducto: (id: string) => void;
 }

@@ -1,5 +1,3 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,10 +7,183 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  admin
+  cliente
+}
+
 model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  name            String?
+  password        String
+  role            Role      @default(cliente)
+  direccion       String?
+  telefono        String?
+  ciudad          String?
+  pais            String?
+  avatar          String?
+  fechaNacimiento String?
+  verificado      Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+
+  // Relaciones
+  pedidos          Pedido[]
+  tokens           VerificacionToken[] // <-- Aquí agregamos el lado opuesto
+  Favorito         Favorito[]
+  Comentario       Comentario[]
+  Estrella         Estrella[]
+  productoGuardado ProductoGuardado[]
+}
+
+model VerificacionToken {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
+  token     String
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id]) // ya estaba
+}
+
+model Producto {
+  id                  String   @id @default(cuid())
+  nombre              String
+  slug                String   @unique
+  referencia          String   @unique
+  descripcion         String
+  precio              Float
+  precioAntiguo       Float?
+  descuento           Int?
+  mensaje             String?
+  imagen              String
+  imagenesSecundarias String[]
+  stock               Int
+  variantes           String[]
+  color               String
+  categoria           String
+  tiempoEnvioDias     Int?
+  ubicacion           String?
+  limiteStockVisible  Int?
+  createdAt           DateTime @default(now())
+
+  pedidos PedidoItem[]
+
+  // Relaciones inversas agregadas
+  inventory        Inventory[]
+  descuentos       Discount[]
+  opcionesEnvio    ShippingOption[]
+  Categoria        Categoria?         @relation(fields: [categoriaSlug], references: [slug])
+  categoriaSlug    String?
+  Variante         Variante[]
+  Favorito         Favorito[]
+  Comentario       Comentario[]
+  Estrella         Estrella[]
+  ProductoGuardado ProductoGuardado[]
+}
+
+model ProductoGuardado {
+  id         String @id @default(cuid())
+  usuarioId  String
+  productoId String
+
+  usuario  User     @relation(fields: [usuarioId], references: [id])
+  producto Producto @relation(fields: [productoId], references: [id])
+
+  @@unique([usuarioId, productoId])
+}
+
+model Categoria {
+  slug        String     @id
+  nombre      String
+  descripcion String?
+  productos   Producto[]
+}
+
+model Variante {
+  id         String   @id @default(cuid())
+  nombre     String // ej: S, M, L, XL
+  productoId String
+  producto   Producto @relation(fields: [productoId], references: [id])
+}
+
+model Favorito {
+  id         String @id @default(cuid())
+  userId     String
+  productoId String
+
+  user     User     @relation(fields: [userId], references: [id])
+  producto Producto @relation(fields: [productoId], references: [id])
+
   createdAt DateTime @default(now())
+}
+
+model Pedido {
+  id         String   @id @default(cuid())
+  userId     String
+  direccion  String
+  metodoPago String
+  estado     String // "Pendiente", "En camino", "Entregado"
+  total      Float
+  fecha      DateTime @default(now())
+
+  user  User         @relation(fields: [userId], references: [id])
+  items PedidoItem[]
+}
+
+model PedidoItem {
+  id         String  @id @default(cuid())
+  pedidoId   String
+  productoId String
+  cantidad   Int
+  precioUnit Float
+  variante   String? // talla seleccionada
+  color      String? // color seleccionado
+
+  pedido   Pedido   @relation(fields: [pedidoId], references: [id])
+  producto Producto @relation(fields: [productoId], references: [id])
+}
+
+model Comentario {
+  id         String   @id @default(cuid())
+  contenido  String
+  userId     String
+  productoId String
+  fecha      DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  producto Producto @relation(fields: [productoId], references: [id])
+}
+
+model Inventory {
+  id         String   @id @default(cuid())
+  producto   Producto @relation(fields: [productoId], references: [id])
+  productoId String
+  cantidad   Int
+}
+
+model Estrella {
+  id         String @id @default(cuid())
+  valor      Int // de 1 a 5
+  userId     String
+  productoId String
+
+  user     User     @relation(fields: [userId], references: [id])
+  producto Producto @relation(fields: [productoId], references: [id])
+}
+
+model Discount {
+  id         String   @id @default(cuid())
+  porcentaje Int
+  activo     Boolean  @default(true)
+  productoId String
+  producto   Producto @relation(fields: [productoId], references: [id])
+}
+
+model ShippingOption {
+  id         String   @id @default(cuid())
+  tipo       String // nacional, express, etc
+  precio     Float
+  tiempoDias Int
+  productoId String
+  producto   Producto @relation(fields: [productoId], references: [id])
 }

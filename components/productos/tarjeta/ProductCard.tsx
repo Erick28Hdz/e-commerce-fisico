@@ -4,17 +4,10 @@ import { ProductoTitulo } from "./ProductoTitulo";
 import { ProductoPrecio } from "../detallado/sec-derecha/ProductoPrecio";
 import { ProductoPuntuacion } from "../detallado/review/ProductoPuntuacion";
 import { ProductoMensaje } from "../detallado/sec-derecha/ProductoMensaje";
-import { reviewsMock } from "@/data/reviewsMock";  // Importa las reseñas
+import type { Producto } from '@prisma/client';
 
-interface ProductoCardProps {
-  id: string;
-  slug: string;
-  nombre: string;
-  imagen: string;
-  precio: number;
-  precioAntiguo?: number;
-  descuento?: number;
-  mensaje?: string;
+interface ProductoCardProps extends Producto {
+  rating?: number;
 }
 
 export default function ProductoCard({
@@ -26,16 +19,8 @@ export default function ProductoCard({
   precioAntiguo,
   descuento,
   mensaje,
+  rating = 0,
 }: ProductoCardProps) {
-  // 1️⃣ Filtrar reseñas del producto actual
-  const reseñasDelProducto = reviewsMock.filter((r) => r.productoId === id);
-
-  // 2️⃣ Calcular promedio de puntuación
-  const promedio =
-    reseñasDelProducto.length > 0
-      ? reseñasDelProducto.reduce((acc, r) => acc + r.calificacion, 0) / reseñasDelProducto.length
-      : 0;
-
   return (
     <Link href={`/productos/${slug}`}>
       <div
@@ -59,12 +44,11 @@ export default function ProductoCard({
         {/* BLOQUE INFERIOR: Título + Puntuación + Precio */}
         <div className="flex flex-col gap-1 mt-4">
           <ProductoTitulo nombre={nombre} />
-          {/* Mostrar la puntuación calculada */}
-          <ProductoPuntuacion productoId={id} rating={promedio} />
+          <ProductoPuntuacion productoId={id} rating={rating} />
           <ProductoPrecio
             precio={precio}
-            precioAntiguo={precioAntiguo}
-            descuento={descuento}
+            precioAntiguo={precioAntiguo ?? undefined}
+            descuento={descuento ?? undefined}
           />
         </div>
       </div>

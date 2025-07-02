@@ -6,9 +6,10 @@ interface Props {
   columnas?: string[];
   filas?: string[][];
   lista?: string[];
+  acciones?: React.ReactNode[];
 }
 
-export const Tabla: React.FC<Props> = ({ titulo, columnas, filas, lista }) => {
+export const Tabla: React.FC<Props> = ({ titulo, columnas, filas, lista, acciones }) => {
   return (
     <div
       style={{
@@ -32,21 +33,8 @@ export const Tabla: React.FC<Props> = ({ titulo, columnas, filas, lista }) => {
       )}
 
       {columnas && filas ? (
-        <div
-          style={{
-            overflowX: "auto",
-            border: "2px solid var(--color-principal)",
-            borderRadius: "0.5rem",
-            overflow: "hidden", // muy importante para el radius
-          }}
-        >
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              fontSize: "0.875rem",
-            }}
-          >
+        <div className="w-full overflow-x-auto rounded-lg border-2 border-[var(--color-principal)]">
+          <table className="min-w-full border-collapse text-sm">
             <thead>
               <tr
                 style={{
@@ -59,7 +47,7 @@ export const Tabla: React.FC<Props> = ({ titulo, columnas, filas, lista }) => {
                     key={i}
                     style={{
                       padding: "0.5rem 0.75rem",
-                      textAlign: "left",
+                      textAlign: "center",
                       fontWeight: 500,
                       textTransform: "uppercase",
                       letterSpacing: "0.05em",
@@ -68,6 +56,7 @@ export const Tabla: React.FC<Props> = ({ titulo, columnas, filas, lista }) => {
                     {columna}
                   </th>
                 ))}
+                {acciones && <th>Acciones</th>}
               </tr>
             </thead>
             <tbody>
@@ -82,21 +71,21 @@ export const Tabla: React.FC<Props> = ({ titulo, columnas, filas, lista }) => {
                     transition: "background-color 0.3s",
                   }}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      "var(--color-accent)")
+                  (e.currentTarget.style.backgroundColor =
+                    "var(--color-accent)")
                   }
                   onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      i % 2 === 0
-                        ? "var(--color-bg-secondary)"
-                        : "var(--color-bg-primary)")
+                  (e.currentTarget.style.backgroundColor =
+                    i % 2 === 0
+                      ? "var(--color-bg-secondary)"
+                      : "var(--color-bg-primary)")
                   }
                 >
                   {fila.map((valor, j) => (
                     <td
                       key={j}
                       style={{
-                        
+
                         padding: "0.5rem 0.75rem",
                         color: "var(--color-text-primary)",
                         textAlign: "center",
@@ -105,6 +94,13 @@ export const Tabla: React.FC<Props> = ({ titulo, columnas, filas, lista }) => {
                       {valor}
                     </td>
                   ))}
+                  {acciones && (
+                    <td>
+                      <div className="flex justify-center items-center gap-2 px-2 py-1">
+                        {acciones[i]}
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

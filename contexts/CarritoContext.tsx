@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import { Producto } from "@/data/productosMock";
+import type { Producto } from "@prisma/client";
 
 type CarritoItem = Producto & { cantidad: number };
 

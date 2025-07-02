@@ -4,10 +4,17 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link"
 import { TooltipUniversal } from "@/components/ui/Tooltip";
 import { useProductoGuardado } from "@/hooks/useProductoGuardado";
-import type { Producto } from "@/data/productosMock";
+
+type ProductoParaAcciones = {
+  id: string;
+  slug: string;
+  nombre: string;
+  imagen: string;
+  precio: number;
+};
 
 type Props = {
-  producto: Producto;
+  producto: ProductoParaAcciones;
 };
 
 export const ProductoAcciones: React.FC<Props> = ({ producto }) => {

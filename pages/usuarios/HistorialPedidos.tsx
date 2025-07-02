@@ -1,6 +1,7 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import { Section } from '@/components/ui/Section'
-import Link from 'next/link'
 import { PedidoCard } from '@/components/carrito/PedidoCard'
 import { Button } from '@/components/ui/Button'
 import Paginacion from '@/components/ui/Paginacion'
@@ -17,8 +18,6 @@ interface Pedido {
   estado: string
   productos: Producto[]
   total: number
-  direccion?: string
-  metodoPago?: string
   fecha?: string
 }
 
@@ -30,12 +29,10 @@ const PedidoHistorial = () => {
   const [expandido, setExpandido] = useState<{ [id: string]: boolean }>({})
 
   useEffect(() => {
-    const historialGuardado = localStorage.getItem('historial_pedidos')
-    if (historialGuardado) {
-      const historial = JSON.parse(historialGuardado)
-      setPedidos(historial)
-      localStorage.setItem('pedidos', JSON.stringify(historial))
-    }
+    fetch("/api/pedidos/historial")
+      .then(res => res.json())
+      .then(setPedidos)
+      .catch(err => console.error("Error cargando pedidos:", err))
   }, [])
 
   const totalPaginas = Math.ceil(pedidos.length / PEDIDOS_POR_PAGINA)
@@ -70,7 +67,6 @@ const PedidoHistorial = () => {
       <div className="space-y-6 mt-6">
         {pedidosPagina.map((pedido) => (
           <div key={pedido.id} className="transition rounded-lg p-4 border border-[var(--color-bg-secondary)]">
-            {/* Click para expandir/cerrar */}
             <div className="cursor-pointer" onClick={() => toggleExpandido(pedido.id)}>
               <PedidoCard
                 id={pedido.id}
@@ -80,11 +76,7 @@ const PedidoHistorial = () => {
               />
             </div>
 
-            {/* Contenedor con animación */}
-            <div
-              className={`transition-all duration-500 ease-in-out overflow-hidden ${expandido[pedido.id] ? 'max-h-[1000px] mt-4' : 'max-h-0'
-                }`}
-            >
+            <div className={`transition-all duration-500 ease-in-out overflow-hidden ${expandido[pedido.id] ? 'max-h-[1000px] mt-4' : 'max-h-0'}`}>
               <div className="mt-4 flex justify-end gap-4">
                 <Button onClick={() => volverAComprar(pedido.productos)}>
                   Volver a comprar

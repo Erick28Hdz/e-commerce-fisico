@@ -1,8 +1,19 @@
+'use client'; // si estás usando App Router (Next.js 13+)
+
+import { useEffect, useState } from 'react';
 import ProductoCard from "../../tarjeta/ProductCard";
-import { productosMock } from "@/data/productosMock";
+import type { Producto } from '@prisma/client';
+
+type ProductoConRating = Producto & { rating: number };
 
 export default function ProductosMasVendidos() {
-  const masVendidos = productosMock.slice(0, 5); // Ejemplo simple
+  const [masVendidos, setMasVendidos] = useState<ProductoConRating[]>([]);
+
+  useEffect(() => {
+    fetch('/api/productos/mas-vendidos')
+      .then((res) => res.json())
+      .then((data: ProductoConRating[]) => setMasVendidos(data));
+  }, []);
 
   if (masVendidos.length === 0) return null;
 
@@ -16,7 +27,7 @@ export default function ProductosMasVendidos() {
         <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide px-2">
           {masVendidos.map((producto) => (
             <div key={producto.slug} className="min-w-[250px] max-w-[250px] flex-shrink-0">
-              <ProductoCard {...producto} />
+              <ProductoCard {...producto} rating={producto.rating} />
             </div>
           ))}
         </div>

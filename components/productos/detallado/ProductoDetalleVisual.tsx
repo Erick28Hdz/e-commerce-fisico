@@ -4,7 +4,7 @@ import { GaleriaProducto } from "./GaleriaProducto";
 import { ProductoStock } from "./sec-derecha/ProductoStock";
 import { ProductoCantidad } from "./sec-izquierda/ProductoCantidad";
 import { BotonesAccion } from "./sec-izquierda/BotonesAccion";
-import { Producto } from "@/data/productosMock";
+import { Producto } from "@prisma/client";
 
 interface Props {
   producto: Producto;
@@ -27,10 +27,10 @@ export default function ProductoDetalleVisual({ producto }: Props) {
         <div className="flex items-center gap-4 px-4">
           <div className="flex-1">
             <ProductoStock
-              stock={producto.stock}
-              tiempoEnvioDias={producto.tiempoEnvioDias}
-              ubicacion={producto.ubicacion}
-              limiteStockVisible={producto.limiteStockVisible}
+              stock={producto.stock ?? 0}
+              tiempoEnvioDias={producto.tiempoEnvioDias ?? 3}
+              ubicacion={producto.ubicacion ?? "bodega principal"}
+              limiteStockVisible={producto.limiteStockVisible ?? 5}
             />
           </div>
           <div className="flex-shrink-0">
